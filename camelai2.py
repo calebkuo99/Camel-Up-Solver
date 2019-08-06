@@ -127,7 +127,3 @@ def testfunc():
 
 board = Board([[1,2,3,4,5],[],[],[]])
 board.chanceCamelWin(1)
-
-def hello():
-		print("hello im gay")
-		
