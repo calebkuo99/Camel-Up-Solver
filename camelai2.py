@@ -1,5 +1,5 @@
 class Game(object):
-    def __init_(self, boardstate):
+    def __init__(self, boardstate):
         self.board = Board(boardstate) #2d array of camel and thier places [[],[], [], [] ,[] ]
         self.camels = [Camels(1),Camels(2),Camels(3),Camels(4),Camels(5)]
 
@@ -30,7 +30,7 @@ class Board(object):
         print("============================= new moveCamel call =============================")
         print(oldboard)
         newBoard = oldboard[:]
-        coordinate = self.findCamel(camelNum)
+        coordinate = self.findCamel(camelNum, oldboard)
         print(coordinate)
         camelTile = oldboard[coordinate[0]]
 
@@ -48,10 +48,11 @@ class Board(object):
         return newBoard
 
     #takes in the number for the camel to locate. returns coordinate for where the camel is
-    def findCamel(self, camelNum):
+    def findCamel(self, camelNum, boardstate):
         print("camelnum: " + str(camelNum))
-        for i in range(len(self.boardstate)):
-            curTile = self.boardstate[i]
+        print(boardstate)
+        for i in range(len(boardstate)):
+            curTile = boardstate[i]
             for j in range(len(curTile)): #[[], [camel1, camel2], [],[]]
                 curCamel = curTile[j]
                 if curCamel == camelNum:
@@ -70,7 +71,7 @@ class Board(object):
 
     #assign all possible spaces to move for every camel, then assign the order to move camels, then run boardstate accordinly, then see if specific camel is in front.
     #[[3,1],[2,2],[5,1],[4,1],[1,1]]
-    def chanceCamelWin(self, camelCheckWin):
+    def chanceCamelWin(self, camelCheckWin, board):
 
         numTimesWin = [0,0,0,0,0]
         counter = 0
@@ -116,7 +117,9 @@ class Board(object):
                                                     print(a)
                                                     camelNumSpacePairings += [[ordering5[a], camelSpacesToMove[a][0]]]
 
-                                                newBoardState = self.boardstate[:]
+                                                newBoardState = self.arraycopy(board)
+                                                print("a;slkdjfa;lkdsjf;alskdjf;aslkdf board:")
+                                                print(board)
 
                                                 print("================================ camelnumspacepairing:")
                                                 print(camelNumSpacePairings)
@@ -132,10 +135,20 @@ class Board(object):
         print(percentages)
 
 
+    def arraycopy(self, array):
+        retarray = []
+        for i in range(len(array)):
+            retarray += []
+        print(retarray)
+        for i in range(len(array)):
+            retarray[i] = array[i]
+        return retarray
+
+
 
 def testfunc():
         print("working")
 
-board = Board([[1,2,3,4,5],[],[],[]])
-board.chanceCamelWin(1)
+board = Board([[1,2,3,4,5],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]])
+board.chanceCamelWin(1, [[1,2,3,4,5],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]])
 
