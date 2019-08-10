@@ -139,6 +139,7 @@ class Board(object):
         retarray = []
         for i in range(len(array)):
             retarray += []
+        print("printing retarray")
         print(retarray)
         for i in range(len(array)):
             retarray[i] = array[i]
