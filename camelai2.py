@@ -30,7 +30,7 @@ class Board(object):
         print("============================= new moveCamel call =============================")
         print(oldboard)
         newBoard = oldboard[:]
-        coordinate = self.findCamel(camelNum)
+        coordinate = self.findCamel(camelNum, oldboard)
         print(coordinate)
         camelTile = oldboard[coordinate[0]]
 
@@ -48,13 +48,17 @@ class Board(object):
         return newBoard
 
     #takes in the number for the camel to locate. returns coordinate for where the camel is
-    def findCamel(self, camelNum):
+    def findCamel(self, camelNum, boardstate):
         print("camelnum: " + str(camelNum))
-        for i in range(len(self.boardstate)):
-            curTile = self.boardstate[i]
+        print("boardstate:")
+        print(boardstate)
+        for i in range(len(boardstate)):
+            curTile = boardstate[i]
             for j in range(len(curTile)): #[[], [camel1, camel2], [],[]]
                 curCamel = curTile[j]
                 if curCamel == camelNum:
+                    print("the tile:")
+                    print(curTile)
                     print("found camelNum: ")
                     print([i,j])
                     return [i,j]
@@ -115,8 +119,15 @@ class Board(object):
                                                 for a in range(5):
                                                     print(a)
                                                     camelNumSpacePairings += [[ordering5[a], camelSpacesToMove[a][0]]]
+                                                newBoardState = []
+                                                print("******** newboardstate beofreinitializeee")
+                                                print(newBoardState)
+                                                print("self.boardstae[:]")
+                                                print(self.boardstate)
 
                                                 newBoardState = self.boardstate[:]
+                                                print("******** newboardstate before last forloop")
+                                                print(newBoardState)
 
                                                 print("================================ camelnumspacepairing:")
                                                 print(camelNumSpacePairings)
@@ -136,6 +147,6 @@ class Board(object):
 def testfunc():
         print("working")
 
-board = Board([[1,2,3,4,5],[],[],[]])
+board = Board([[1,2,3,4,5],[],[],[],[],[],[],[],[],[],[],[],[]])
 board.chanceCamelWin(1)
 
