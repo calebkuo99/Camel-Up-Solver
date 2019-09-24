@@ -1,5 +1,5 @@
 class Game(object):
-    def __init_(self, boardstate):
+    def __init__(self, boardstate):
         self.board = Board(boardstate) #2d array of camel and thier places [[],[], [], [] ,[] ]
         self.camels = [Camels(1),Camels(2),Camels(3),Camels(4),Camels(5)]
 
@@ -74,7 +74,7 @@ class Board(object):
 
     #assign all possible spaces to move for every camel, then assign the order to move camels, then run boardstate accordinly, then see if specific camel is in front.
     #[[3,1],[2,2],[5,1],[4,1],[1,1]]
-    def chanceCamelWin(self, camelCheckWin):
+    def chanceCamelWin(self, camelCheckWin, board):
 
         numTimesWin = [0,0,0,0,0]
         counter = 0
@@ -141,6 +141,17 @@ class Board(object):
             percentages[i] = numTimesWin[i]/counter
 
         print(percentages)
+
+
+    def arraycopy(self, array):
+        retarray = []
+        for i in range(len(array)):
+            retarray += []
+        print("printing retarray")
+        print(retarray)
+        for i in range(len(array)):
+            retarray[i] = array[i]
+        return retarray
 
 
 
