@@ -29,13 +29,19 @@ class Board(object):
 			else:
 				self.state[0].add_camels([1, 2, 3])
 				self.all_camels = [1, 2, 3]
-	
-	def add_camel(self, camel_id, position=0):
-		"""Add camel_id to position."""
-		self.state[position].add_camels([camel_id])
 
 	def move_camel(self, camel_id, num_spaces, position=None):
-		"""Move camel_id (at position) num_spaces forward."""
+		"""Move camel_id (at position) num_spaces forward.
+		
+		>>> print(b)
+		[[1, 2, 3][0], [4][0], [5][0], [][0], [][-1], [][0], ...]
+		>>> b.move_camel(1, 3)
+		>>> print(b)
+		[[1][0], [4, 2, 3][0], [5][0], [][0], [][-1], [][0], ...]
+		>>> b.move_camel(5, 2)
+		>>> print(b)
+		[[1][0], [4, 2, 3][0], [][0], [5][0], [][-1], [][0], ...]
+		"""
 		if num_spaces <= 0 or num_spaces > 3:
 			assert False, "Camels can only move 1, 2, or 3 spaces!"
 
@@ -48,6 +54,14 @@ class Board(object):
 		
 		# check for powerup
 		end_position = position + num_spaces
+
+		# check for winner
+		if end_position >= NUM_TILES - 1 or (end_position == NUM_TILES - 2 and self.state[end_position].powerup == 1):
+			end_position = NUM_TILES - 1
+			self.state[end_position].add_camels(removed_camels)
+
+			# WINNER = self.board.winning_camel()
+			return
 		powerup = self.state[end_position].powerup
 		end_position += powerup
 
@@ -213,10 +227,10 @@ class Place(object):
 		return self.camels[0]
 
 	def __str__(self):
-		return str(self.camels)
+		return str(self.camels) + "[" + str(self.powerup) + "]"
 
 	def __repr__(self):
-		return str(self.camels)
+		return str(self.camels) + "[" + str(self.powerup) + "]"
 
 
 class Solver(object):
@@ -310,9 +324,18 @@ d = {0: [1, 2, 3], 1: [4], 2: [5]}
 b = Board(d)
 s = Solver(b)
 
-print(s.brute_force())
+b.add_powerup(4, -1)
+
+print(b)
+b.move_camel(2, 1)
+print(b)
+b.move_camel(5, 2)
+print(b)
 
 """
+print(b)
+print(s.brute_force())
+
 print(b)
 b.move_camel(1, 3, 0)
 print(b)
