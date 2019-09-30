@@ -86,6 +86,19 @@ def all_dice_permutations(num_camels):
 		answer += [[3] + ordering]
 	return answer
 
+class Player(object):
+	"""Play the game!"""
+
+	def __init__(self, num_players):
+		"""Create a Player object."""
+
+		self.board = Board()
+		self.solver = Solver(self.board)
+		self.num_players = num_players
+
+	def add_camel(self, camel, position):
+		self.board.add_camel(1)
+
 
 d = {0: [1, 2, 3], 1: [4], 2: [5]}
 b = Board(d)

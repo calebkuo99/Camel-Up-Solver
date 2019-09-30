@@ -1,6 +1,8 @@
 import copy
 
 NUM_TILES = 17 # 16 + 1 for end position
+CAMEL_MAPPING = {1: "red", 2: "blue", 3: "purple", 4: "green", 5: "yellow"}
+COLOR_MAPPING = {"red": 1, "blue": 2, "purple": 3, "green": 4, "yellow": 5}
 
 class Board(object):
 	"""Game Board"""
@@ -8,39 +10,44 @@ class Board(object):
 	def __init__(self, starting=None, board=None):
 		"""Create a Game Board
 
-		state -- array of Places
 		starting -- starting layout of camels; dictionary: index -> [camels]
+		board -- create a copy of Board given a board
 
-		#TODO: how to use this constructor
+		state -- array of Places
+		all_camels -- array of all the camels
+		moved_camels -- array of the moved camels 
 		"""
+		self.state = []
+		self.all_camels = []
+		self.moved_camels = []
 		if board is not None:
 			self.state = copy.deepcopy(board.state)
-			self.moved_camels = copy.deepcopy(board.moved_camels)
 			self.all_camels = copy.deepcopy(board.all_camels)
+			self.moved_camels = copy.deepcopy(board.moved_camels)
 		else:
 			self.state = [Place([]) for x in range(NUM_TILES)]
-			self.moved_camels = []
-			self.all_camels = []
 
 			if starting != None:
 				for p in starting.keys():
 					self.state[p].add_camels(starting[p])
 					self.all_camels += starting[p]
-			else:
-				self.state[0].add_camels([1, 2, 3])
-				self.all_camels = [1, 2, 3]
 
 	def move_camel(self, camel_id, num_spaces, position=None):
-		"""Move camel_id (at position) num_spaces forward.
+		"""Move camel_id (at position) num_spaces forward. Updates moved_camels to include 
+		the camel that moved.
 		
-		>>> print(b)
+		>>> b
 		[[1, 2, 3][0], [4][0], [5][0], [][0], [][-1], [][0], ...]
+		>>> b.moved_camels
+		[]
 		>>> b.move_camel(1, 3)
-		>>> print(b)
+		>>> b
 		[[1][0], [4, 2, 3][0], [5][0], [][0], [][-1], [][0], ...]
 		>>> b.move_camel(5, 2)
-		>>> print(b)
+		>>> b
 		[[1][0], [4, 2, 3][0], [][0], [5][0], [][-1], [][0], ...]
+		>>> b.moved_camels
+		[1, 5]
 		"""
 		if num_spaces <= 0 or num_spaces > 3:
 			assert False, "Camels can only move 1, 2, or 3 spaces!"
@@ -85,22 +92,36 @@ class Board(object):
 		return position
 
 	def add_powerup(self, position, powerup):
-		"""Add powerup (-1 or 1) at position"""
+		"""Add powerup (-1 or 1) at position
+		
+		>>> b
+		[[1, 2, 3][0], [4][0], [5][0], [][0], [][0], [][0]
+		>>> b.add_powerup(4, -1)
+		>>> b
+		[[1, 2, 3][0], [4][0], [5][0], [][0], [][-1], [][0]
+		"""
 		self.state[position].place_powerup(powerup)
 
 	def remove_powerup(self, position):
-		"""Remove powerup (reset to 0) at position"""
+		"""Remove powerup (reset to 0) at position
+		
+		>>> b
+		[[1, 2, 3][0], [4][0], [5][0], [][0], [][-1], [][0]
+		>>> b.remove_powerup(4)
+		>>> b
+		[[1, 2, 3][0], [4][0], [5][0], [][0], [][0], [][0]
+		"""
 		self.state[position].remove_powerup()
 
-	def remove_powerups(self):
-		"""Remove all powerups"""
+	def new_round(self):
+		"""Defines a new round."""
+		# reset moved camels
+		self.moved_camels = []
+
+		# remove all powerups
 		for p in self.state:
 			p.remove_powerup()
-
-	def new_round(self):
-		#TODO
-		self.moved_camels = []
-		self.remove_powerups()
+			
 		return 0
 
 	def losing_camel(self):
@@ -118,7 +139,6 @@ class Board(object):
 
 	def second_place_camel(self):
 		"""Returns id of the camel in second place."""
-		#TODO: needs testing/verification; breaks encapsulation
 		found_first = False
 		for i in range(len(self.state) - 1, 0, -1):
 			p = self.state[i]
@@ -131,12 +151,9 @@ class Board(object):
 				return p.winning_camel()
 		return 0
 
-	def print_powerups(self):
-		"""Print layout of powerups"""
-		l = []
-		for p in self.state:
-			l += [p.powerup]
-		print(l)
+	def add_camel(self, camel_id, position):
+		"""Adds a camel at position."""
+		self.state[position].add_camels([camel_id])
 
 	def __repr__(self):
 		return str(self.state)
@@ -147,7 +164,6 @@ class Place(object):
 	def __init__(self, camels):
 		"""Create a Place
 
-		position -- int of this Place's tile location
 		camels -- list of camels in this place -- [bottom, ... , top]
 		powerup -- int {-1, 0, 1} of a powerup in this Place
 		"""
@@ -226,9 +242,8 @@ class Place(object):
 		"""Returns the lowest camel in this Place."""
 		return self.camels[0]
 
-	def __str__(self):
-		return str(self.camels) + "[" + str(self.powerup) + "]"
-
 	def __repr__(self):
 		return str(self.camels) + "[" + str(self.powerup) + "]"
 
+d = {0: [1, 2, 3], 1: [4], 2: [5]}
+b = Board(d)
