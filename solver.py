@@ -16,7 +16,6 @@ class Solver(object):
 			new_boards[dice_roll - 1].move_camel(camel_id, dice_roll)
 		return new_boards
 
-
 class BruteForce(Solver):
 	def find_distributions(self):
 		"""Finds the distributions of the likelihood that a given 
@@ -72,7 +71,6 @@ class BruteForce(Solver):
 				total += 1
 
 		return hits / total
-
 	
 def all_permutations(l):
 	"""Returns a list of all permutations of l.
@@ -121,46 +119,13 @@ class Player(object):
 
 		self.board = Board()
 		self.solver = Solver(self.board)
-		self.num_players = num_players
+		#self.num_players = num_players
 
 	def add_camel(self, camel, position):
 		self.board.add_camel(1)
 
-
+"""
 d = {0: [1, 2, 3], 1: [4], 2: [5]}
 b = Board(d)
 s = BruteForce(b)
-
-print(b)
-
-"""
-print(b)
-print(s.brute_force())
-
-print(b)
-b.move_camel(1, 3, 0)
-print(b)
-b.move_camel(2, 1)
-print(b)
-print(b.moved_camels)
-
-b.new_round()
-b.move_camel(1, 1)
-print(b)
-
-b.add_powerup(5, 1)
-b.add_powerup(7, -1)
-b.print_powerups()
-
-b.move_camel(4, 1)
-b.move_camel(3, 3)
-print(b)
-print(b.moved_camels)
-
-b.add_powerup(0, 1)
-b.print_powerups()
-b.remove_powerup(0)
-b.print_powerups()
-b.remove_powerups()
-b.print_powerups()
 """
