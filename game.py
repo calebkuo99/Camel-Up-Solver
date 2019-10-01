@@ -34,7 +34,7 @@ class Board(object):
 
 	def move_camel(self, camel_id, num_spaces, position=None):
 		"""Move camel_id (at position) num_spaces forward. Updates moved_camels to include 
-		the camel that moved.
+		the camel that moved. Returns True if the camel(s) had landed on a powerup. False otherwise.
 		
 		>>> b
 		[[1, 2, 3][0], [4][0], [5][0], [][0], [][-1], [][0], ...]
@@ -61,6 +61,10 @@ class Board(object):
 		
 		# check for powerup
 		end_position = position + num_spaces
+		landed_on_powerup = False
+
+		if end_position < NUM_TILES and self.state[end_position].powerup != 0:
+			landed_on_powerup = True
 
 		# check for winner
 		if end_position >= NUM_TILES - 1 or (end_position == NUM_TILES - 2 and self.state[end_position].powerup == 1):
@@ -68,7 +72,8 @@ class Board(object):
 			self.state[end_position].add_camels(removed_camels)
 
 			# WINNER = self.board.winning_camel()
-			return
+			return landed_on_powerup
+
 		powerup = self.state[end_position].powerup
 		end_position += powerup
 
@@ -78,6 +83,7 @@ class Board(object):
 			self.state[end_position].add_camels(removed_camels)
 		
 		self.moved_camels += [camel_id]
+		return landed_on_powerup
 
 	def find_camel_position(self, camel_id):
 		"""Find the position of camel_id
@@ -100,6 +106,9 @@ class Board(object):
 		>>> b
 		[[1, 2, 3][0], [4][0], [5][0], [][0], [][-1], [][0]
 		"""
+		if position >= NUM_TILES - 1:
+			assert False, "Cannot place powerup at last position"
+
 		self.state[position].place_powerup(powerup)
 
 	def remove_powerup(self, position):

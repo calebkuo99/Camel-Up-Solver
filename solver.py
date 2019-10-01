@@ -5,14 +5,25 @@ class Solver(object):
 	def __init__(self, board):
 		self.board = board
 
-	#def find_distributions(self):
-	def brute_force(self):
+	def get_camels_not_moved(self):
+		return [c for c in self.board.all_camels if c not in self.board.moved_camels]
+
+	def move_camel_all_ways(self, camel_id):
+		"""Returns a list of boards of the possibilities if camel_id moves."""
+		new_boards = []
+		for dice_roll in [1, 2, 3]:
+			new_boards += [Board(board=self.board)]
+			new_boards[dice_roll - 1].move_camel(camel_id, dice_roll)
+		return new_boards
+
+
+class BruteForce(Solver):
+	def find_distributions(self):
 		"""Finds the distributions of the likelihood that a given 
 		camel will win this round. Takes into account the the camels 
 		that have moved already."""
 
-		camels_not_moved = [c for c in self.board.all_camels if c not in self.board.moved_camels]
-
+		camels_not_moved = self.get_camels_not_moved()
 		all_camel_orderings = all_permutations(camels_not_moved)
 		all_dice_orderings = all_dice_permutations(len(camels_not_moved))
 		boards = []
@@ -38,15 +49,31 @@ class Solver(object):
 		
 		return distributions
 
-	def move_camel_all_ways(self, camel_id):
-		"""Returns a list of boards of the possibilities if camel_id moves."""
-		new_boards = []
-		for dice_roll in [1, 2, 3]:
-			new_boards += [Board(board=self.board)]
-			new_boards[dice_roll - 1].move_camel(camel_id, dice_roll)
-		return new_boards
+	def expected_powerup_value(self, position, powerup):
+		"""Returns expected number of camels landing on a given powerup at a given position."""
+		camels_not_moved = self.get_camels_not_moved()
+		board_with_powerup = Board(board=self.board)
+		board_with_powerup.add_powerup(position, powerup)
 
+		all_camel_orderings = all_permutations(camels_not_moved)
+		all_dice_orderings = all_dice_permutations(len(camels_not_moved))
 
+		hits = 0
+		total = 0
+		for camel_ordering in all_camel_orderings:
+			for dice_ordering in all_dice_orderings:
+				simulation_board = Board(board=board_with_powerup)
+
+				for i in range(len(camel_ordering)):
+					hit = simulation_board.move_camel(camel_ordering[i], dice_ordering[i])
+					if hit:
+						hits += 1
+
+				total += 1
+
+		return hits / total
+
+	
 def all_permutations(l):
 	"""Returns a list of all permutations of l.
 	
@@ -102,14 +129,8 @@ class Player(object):
 
 d = {0: [1, 2, 3], 1: [4], 2: [5]}
 b = Board(d)
-s = Solver(b)
+s = BruteForce(b)
 
-b.add_powerup(4, -1)
-
-print(b)
-b.move_camel(2, 1)
-print(b)
-b.move_camel(5, 2)
 print(b)
 
 """
