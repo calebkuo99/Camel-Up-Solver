@@ -25,22 +25,25 @@ class BruteForce(Solver):
 		camels_not_moved = self.get_camels_not_moved()
 		all_camel_orderings = all_permutations(camels_not_moved)
 		all_dice_orderings = all_dice_permutations(len(camels_not_moved))
-		boards = []
+
+		distributions = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
 		total = 0
 		for camel_ordering in all_camel_orderings:
 			for dice_ordering in all_dice_orderings:
-				boards += [Board(board=self.board)]
+				state = self.board.fast_copy_state()
+				moved_camels = [c for c in self.board.moved_camels]
 				if len(camel_ordering) != len(dice_ordering):
 					assert False, "something went wrong"
 				
 				for i in range(len(camel_ordering)):
-					boards[total].move_camel(camel_ordering[i], dice_ordering[i])
+					self.board.move_camel(camel_ordering[i], dice_ordering[i])
+
+				distributions[self.board.winning_camel()] += 1
+				# restore state
+				self.board.state = state
+				self.board.moved_camels = moved_camels
 
 				total += 1
-
-		distributions = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-		for b in boards:
-			distributions[b.winning_camel()] += 1
 
 		# normalize
 		for k in distributions.keys():
@@ -61,12 +64,18 @@ class BruteForce(Solver):
 		total = 0
 		for camel_ordering in all_camel_orderings:
 			for dice_ordering in all_dice_orderings:
-				simulation_board = Board(board=board_with_powerup)
+				state = board_with_powerup.fast_copy_state()
+				moved_camels = [c for c in self.board.moved_camels]
 
 				for i in range(len(camel_ordering)):
-					hit = simulation_board.move_camel(camel_ordering[i], dice_ordering[i])
+					hit = board_with_powerup.move_camel(camel_ordering[i], dice_ordering[i])
+
 					if hit:
 						hits += 1
+
+				# restore state
+				board_with_powerup.state = state
+				board_with_powerup.moved_camels = moved_camels
 
 				total += 1
 
@@ -124,8 +133,7 @@ class Player(object):
 	def add_camel(self, camel, position):
 		self.board.add_camel(1)
 
-"""
-d = {0: [1, 2, 3], 1: [4], 2: [5]}
+
+"""d = {0: [1, 2, 3], 1: [4], 2: [5]}
 b = Board(d)
-s = BruteForce(b)
-"""
+s = BruteForce(b)"""

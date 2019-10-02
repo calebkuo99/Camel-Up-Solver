@@ -1,5 +1,3 @@
-import copy
-
 NUM_TILES = 17 # 16 + 1 for end position
 CAMEL_MAPPING = {1: "red", 2: "blue", 3: "purple", 4: "green", 5: "yellow"}
 COLOR_MAPPING = {"red": 1, "blue": 2, "purple": 3, "green": 4, "yellow": 5}
@@ -21,9 +19,9 @@ class Board(object):
 		self.all_camels = []
 		self.moved_camels = []
 		if board is not None:
-			self.state = copy.deepcopy(board.state)
-			self.all_camels = copy.deepcopy(board.all_camels)
-			self.moved_camels = copy.deepcopy(board.moved_camels)
+			self.state = board.fast_copy_state()
+			self.all_camels = [c for c in board.all_camels]
+			self.moved_camels = [c for c in board.moved_camels]
 		else:
 			self.state = [Place([]) for x in range(NUM_TILES)]
 
@@ -130,8 +128,6 @@ class Board(object):
 		# remove all powerups
 		for p in self.state:
 			p.remove_powerup()
-			
-		return 0
 
 	def losing_camel(self):
 		"""Returns id of the camel in last place."""
@@ -164,6 +160,10 @@ class Board(object):
 		"""Adds a camel at position."""
 		self.state[position].add_camels([camel_id])
 
+	def fast_copy_state(self):
+		"""Returns a copy of self.state, and does it FAST."""
+		return [p.fast_copy() for p in self.state]
+
 	def __repr__(self):
 		return str(self.state)
 
@@ -178,7 +178,7 @@ class Place(object):
 		"""
 		self.camels = camels
 		self.powerup = 0
-
+		
 	def add_camels(self, camels, under=False):
 		"""Add camels to this Place
 
@@ -250,6 +250,14 @@ class Place(object):
 	def losing_camel(self):
 		"""Returns the lowest camel in this Place."""
 		return self.camels[0]
+
+	def fast_copy(self):
+		"""Returns a copy of this Place and does it FAST."""
+		if self.powerup != 0:
+			p = Place([])
+			p.powerup = self.powerup
+			return p
+		return Place([c for c in self.camels])
 
 	def __repr__(self):
 		return str(self.camels) + "[" + str(self.powerup) + "]"
