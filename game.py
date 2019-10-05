@@ -13,11 +13,13 @@ class Board(object):
 
 		state -- array of Places
 		all_camels -- array of all the camels
-		moved_camels -- array of the moved camels 
+		moved_camels -- array of the camels that have moved 
 		"""
 		self.state = []
 		self.all_camels = []
 		self.moved_camels = []
+		self.round_bets = {}
+
 		if board is not None:
 			self.state = board.fast_copy_state()
 			self.all_camels = [c for c in board.all_camels]
@@ -29,6 +31,9 @@ class Board(object):
 				for p in starting.keys():
 					self.state[p][0] = starting[p]
 					self.all_camels += starting[p]
+
+		for i in range(1, 6):
+			self.round_bets[i] = [0, 2, 2, 3, 5]
 
 	def move_camel(self, camel_id, num_spaces, position=None):
 		"""Move camel_id (at position) num_spaces forward. Updates moved_camels to include 
@@ -77,7 +82,7 @@ class Board(object):
 		end_position += powerup
 
 		if powerup == -1:
-			self.add_camels(removed_camels, end_position, True)
+			self.add_camels(removed_camels, end_position, under=True)
 		else:
 			self.add_camels(removed_camels, end_position)
 		
@@ -156,6 +161,20 @@ class Board(object):
 		"""
 		self.state[position][1] = 0
 
+	def take_round_bet(self, id):
+		"""Bet on a camel and return the bet value."""
+		if self.round_bets[id][-1] == 0:
+			assert False, "No more bets left for this camel."
+
+		return self.round_bets[id].pop()
+
+	def view_round_bets(self):
+		"""Returns a dictionary id : bets."""
+		d = {}
+		for k in self.round_bets.key():
+			d[k] = self.round_bets[k][-1]
+		return d
+
 	def new_round(self):
 		"""Defines a new round."""
 		# reset moved camels
@@ -164,6 +183,10 @@ class Board(object):
 		# remove all powerups
 		for place in self.state:
 			place[1] = 0
+
+		# reset round bets
+		for i in range(1, 6):
+			self.round_bets[i].reset()
 
 	def losing_camel(self):
 		"""Returns id of the camel in last place."""
@@ -202,6 +225,25 @@ class Board(object):
 
 	def __repr__(self):
 		return str(self.state)
+
+class RoundBets(object):
+	
+	def __init__(self, id):
+		"""Constructor for RoundBets
+
+		id -- the id/color for these bets
+		"""
+		self.values = [2, 2, 3, 5]
+		self.id = id 
+
+	def pop(self):
+		return self.values.pop()
+
+	def peek(self):
+		return self.values[-1]
+
+	def reset(self):
+		self.values = [2, 2, 3, 5]
 
 """d = {0: [1, 2, 3], 1: [4], 2: [5]}
 b = Board(d)"""
