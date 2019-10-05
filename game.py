@@ -1,6 +1,6 @@
 NUM_TILES = 17 # 16 + 1 for end position
-CAMEL_MAPPING = {1: "red", 2: "blue", 3: "purple", 4: "green", 5: "yellow"}
-COLOR_MAPPING = {"red": 1, "blue": 2, "purple": 3, "green": 4, "yellow": 5}
+COLOR_OF = {1: "r", 2: "b", 3: "p", 4: "g", 5: "y"}
+NUM_OF = {"r": 1, "b": 2, "p": 3, "g": 4, "y": 5}
 
 class Board(object):
 	"""Game Board"""
@@ -156,7 +156,7 @@ class Board(object):
 		"""
 		self.state[position][1] = 0
 
-	def new_round(self):
+	def reset_round(self):
 		"""Defines a new round."""
 		# reset moved camels
 		self.moved_camels = []

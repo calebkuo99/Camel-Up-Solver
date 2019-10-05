@@ -121,7 +121,10 @@ def all_dice_permutations(num_camels):
 	return answer
 
 class Player(object):
-	"""Play the game!"""
+	"""Play the game!
+	ALL camels will be labeled and interacted with color as opposed to number.
+	ALL tiles will be one-indexed.
+	"""
 
 	def __init__(self, num_players):
 		"""Create a Player object."""
@@ -130,8 +133,14 @@ class Player(object):
 		self.solver = Solver(self.board)
 		#self.num_players = num_players
 
-	def add_camel(self, camel, position):
-		self.board.add_camel(1)
+	def add_camel(self, camel_color, position):
+		self.board.add_camels([NUM_OF[camel_color]], position-1)
+
+	def move_camel(self, camel_color, num_space):
+		self.board.move_camel(NUM_OF[camel_color], num_spaces)
+
+	def reset_round(self):
+		self.board.reset_round()
 
 
 """d = {0: [1, 2, 3], 1: [4], 2: [5]}
