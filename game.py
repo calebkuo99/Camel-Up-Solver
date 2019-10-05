@@ -186,7 +186,7 @@ class Board(object):
 
 		# reset round bets
 		for i in range(1, 6):
-			self.round_bets[i].reset()
+			self.round_bets[i] = [0, 2, 2, 3, 5]
 
 	def losing_camel(self):
 		"""Returns id of the camel in last place."""
@@ -225,25 +225,6 @@ class Board(object):
 
 	def __repr__(self):
 		return str(self.state)
-
-class RoundBets(object):
-	
-	def __init__(self, id):
-		"""Constructor for RoundBets
-
-		id -- the id/color for these bets
-		"""
-		self.values = [2, 2, 3, 5]
-		self.id = id 
-
-	def pop(self):
-		return self.values.pop()
-
-	def peek(self):
-		return self.values[-1]
-
-	def reset(self):
-		self.values = [2, 2, 3, 5]
 
 """d = {0: [1, 2, 3], 1: [4], 2: [5]}
 b = Board(d)"""
